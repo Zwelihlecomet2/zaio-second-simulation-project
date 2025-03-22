@@ -97,14 +97,18 @@
 }
 
 .logout-button button{
-    outline: none;
+    padding: 5px 10px;
+    background-color: #0095f6;
+    color: white;
     border: none;
-    color: black;
-    background-color: pink;
     border-radius: 5px;
-    width: 5rem;
-    padding: .3rem;
+    cursor: pointer;
+    margin-left: 14px;
 
+}
+
+.logout-button :hover{
+    background-color: #0077c2;
 }
 
 main {
@@ -358,4 +362,92 @@ main {
 
 .body img {
     width: 100%;
+}
+
+/* Upload Button */
+#uploadButton {
+    padding: 5px 10px;
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 14px;
+}
+
+#uploadButton:hover {
+    background-color: #0077c2;
+}
+
+/* Overlay */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    display: none;
+}
+
+
+/* Modal */
+#uploadModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    z-index: 20;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#uploadModal h2 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#uploadModal form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#uploadModal input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#uploadModal button {
+    padding: 10px;
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+#uploadModal button:hover {
+    background-color: #0077c2;
+}
+
+#closeModal {
+    margin-top: 10px;
+    background-color: #ff4d4d;
+}
+
+#closeModal:hover {
+    background-color: #e63939;
+}
+
+/* Hidden Class */
+.hidden {
+    display: none !important;
 }
