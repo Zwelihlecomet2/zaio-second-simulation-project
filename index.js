@@ -18,33 +18,33 @@ class App {
     }
 
     addEventListeners(){
-        document.body.addEventListener("click", (event) =>{
             this.$logoutButton.addEventListener("click", (event) =>{
                 this.handleLogout(event);
             });
 
-            // document.addEventListener("DOMContentLoaded", (event) =>{
-
-            // });
-
              // Show the modal and overlay when the "Upload" button is clicked
-            uploadButton.addEventListener("click", (event) =>{
-                this.handleUploadModal(event);
+            this.$uploadButton.addEventListener("click", (event) =>{
+                this.showUpModal(event);
                 console.log(event);
             });
-        }); 
+
+            this.$closeModal.addEventListener("click", (event) =>{
+                this.closeModal(event);
+            });
+
+            this.$overlay.addEventListener("click", (event) =>{
+                this.closeModal(event);
+            });
     }
 
-    handleUploadModal(){
-        if(this.$overlay.classList.contains("hidden") && this.$uploadModal.classList.contains("hidden")){
-            this.$overlay.classList.remove("hidden");
-            this.$uploadModal.classList.remove("hidden");
-        }
+    showUpModal(){
+        this.$overlay.classList.remove("hidden");
+        this.$uploadModal.classList.remove("hidden");
+    }
 
-        else{
-            this.$overlay.classList.add("hidden");
-            this.$uploadModal.classList.add("hidden"); 
-        }
+    closeModal(){
+        this.$overlay.classList.add("hidden");
+        this.$uploadModal.classList.add("hidden");
     }
 
     handleAuth(){

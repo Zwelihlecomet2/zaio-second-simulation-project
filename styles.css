@@ -388,7 +388,6 @@ main {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 10;
-    display: none;
 }
 
 
@@ -403,7 +402,6 @@ main {
     border-radius: 10px;
     width: 300px;
     z-index: 20;
-    display: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -449,5 +447,5 @@ main {
 
 /* Hidden Class */
 .hidden {
-    display: none !important;
+    visibility: hidden;
 }
