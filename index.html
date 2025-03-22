@@ -13,9 +13,14 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="mobile-styles.css" />
     <title>Instagram</title>
+
+    <script src="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.js"></script>
+     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.8.0/firebase-ui-auth.css" />
   </head>
 
   <body>
+    <div id="firebaseui-auth-container"></div>
+
     <div class="main-container">
       <div class="navbar">
         <div class="navbar-inner">
@@ -112,6 +117,7 @@
                   src="assets/akhil.png"
                 />
               </div>
+              <div id="logout-button" class="logout-button"><button>logout</button></div>
             </div>
           </div>
         </div>
@@ -1097,5 +1103,35 @@
         </div>
       </main>
     </div>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+
+     <!-- Add Firebase products that you want to use -->
+     <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyD_awL0YOEFUuo5zV1Geje5q1QlGrXYTfk",
+        authDomain: "zaio-second-simulation-project.firebaseapp.com",
+        projectId: "zaio-second-simulation-project",
+        storageBucket: "zaio-second-simulation-project.firebasestorage.app",
+        messagingSenderId: "418166136070",
+        appId: "1:418166136070:web:05db18e973dd615edd9287"
+      };
+    
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Initialize Firebase Authentication and get a reference to the service
+      const auth = firebase.auth();
+
+      // Initialize Firebase store and get a reference to the service
+      const db = firebase.firestore();
+    </script>
+
+    <script src="./index.js"></script>
   </body>
 </html>
