@@ -9,6 +9,7 @@ class App {
         this.$overlay = document.querySelector("#overlay");
         this.$uploadModal = document.querySelector("#uploadModal");
         this.$closeModal = document.querySelector("#closeModal");
+        this.$submit = document.querySelector("#submit");
 
         // Initialize the FirebaseUI Widget using Firebase.
         this.ui = new firebaseui.auth.AuthUI(auth);
@@ -34,6 +35,10 @@ class App {
 
             this.$overlay.addEventListener("click", (event) =>{
                 this.closeModal(event);
+            });
+
+            this.$submit.addEventListener("click", (event) =>{
+                event.preventDefault();
             });
     }
 

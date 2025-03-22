@@ -447,5 +447,5 @@ main {
 
 /* Hidden Class */
 .hidden {
-    visibility: hidden;
+    display: none;
 }
