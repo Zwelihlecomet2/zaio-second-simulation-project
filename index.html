@@ -1128,16 +1128,18 @@
      <!-- Add Firebase products that you want to use -->
      <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
      <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+
 
     <script>
       // Your web app's Firebase configuration
       var firebaseConfig = {
-        apiKey: "AIzaSyD_awL0YOEFUuo5zV1Geje5q1QlGrXYTfk",
-        authDomain: "zaio-second-simulation-project.firebaseapp.com",
-        projectId: "zaio-second-simulation-project",
-        storageBucket: "zaio-second-simulation-project.firebasestorage.app",
-        messagingSenderId: "418166136070",
-        appId: "1:418166136070:web:05db18e973dd615edd9287"
+        apiKey: "AIzaSyAXp1nL0FOnZLVsFANoZ09VT3Rn7WzbFLQ",
+        authDomain: "zaio-simualtion.firebaseapp.com",
+        projectId: "zaio-simualtion",
+        storageBucket: "zaio-simualtion.firebasestorage.app",
+        messagingSenderId: "550377364882",
+        appId: "1:550377364882:web:19accfae8b4c40eaacb54b"
       };
     
       // Initialize Firebase
@@ -1148,6 +1150,10 @@
 
       // Initialize Firebase store and get a reference to the service
       const db = firebase.firestore();
+
+      // Initialize Cloud Storage and get a reference to the service
+      const storage = firebase.storage();
+      console.log(storage);
     </script>
 
     <script src="./index.js"></script>

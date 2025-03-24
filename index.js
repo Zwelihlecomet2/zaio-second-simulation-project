@@ -26,7 +26,6 @@ class App {
              // Show the modal and overlay when the "Upload" button is clicked
             this.$uploadButton.addEventListener("click", (event) =>{
                 this.showUpModal(event);
-                console.log(event);
             });
 
             this.$closeModal.addEventListener("click", (event) =>{
@@ -58,7 +57,6 @@ class App {
               // User is signed in
               this.uid = user.uid;
               // ...
-              console.log(user);
               this.redirectToApp();
             } else {
               // User is signed out
