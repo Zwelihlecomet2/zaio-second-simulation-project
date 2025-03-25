@@ -31,7 +31,6 @@ class App {
              // Show the modal and overlay when the "Upload" button is clicked
             this.$uploadButton.addEventListener("click", (event) =>{
                 this.showUpModal(event);
-                console.log(event);
             });
 
             this.$closeModal.addEventListener("click", (event) =>{
