@@ -1,6 +1,7 @@
 class App {
     constructor(post){
         this.post  = [];
+        this.userId = "";
 
         this.$mainContainer = document.querySelector(".main-container");
         this.$firebaseuiAuthContainer = document.querySelector("#firebaseui-auth-container");
@@ -16,6 +17,10 @@ class App {
 
         this.handleAuth();
         this.addEventListeners();
+    }
+
+    createPost(){
+
     }
 
     addEventListeners(){
@@ -56,9 +61,8 @@ class App {
         auth.onAuthStateChanged((user) => {
             if (user) {
               // User is signed in
-              this.uid = user.uid;
+              this.userId = user.uid;
               // ...
-              console.log(user);
               this.redirectToApp();
             } else {
               // User is signed out
