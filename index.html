@@ -1114,10 +1114,10 @@
               <label for="postCaption">Caption:</label>
               <input type="text" id="postCaption" placeholder="Add a caption..." required>
               
-              <label for="postImage">Image URL:</label>
-              <input type="url" id="postImage" placeholder="Enter image URL..." required>
+              <label for="postImage">Image File:</label>
+              <input type="file" id="postImage" placeholder="Enter image URL..." accept="image/*" required>
               
-              <button id="submit" type="submit">Post</button>
+              <button type="submit">Post</button>
           </form>
           <button id="closeModal">Close</button>
       </div>
@@ -1134,12 +1134,12 @@
     <script>
       // Your web app's Firebase configuration
       var firebaseConfig = {
-        apiKey: "AIzaSyAXp1nL0FOnZLVsFANoZ09VT3Rn7WzbFLQ",
-        authDomain: "zaio-simualtion.firebaseapp.com",
-        projectId: "zaio-simualtion",
-        storageBucket: "zaio-simualtion.firebasestorage.app",
-        messagingSenderId: "550377364882",
-        appId: "1:550377364882:web:19accfae8b4c40eaacb54b"
+    apiKey: "AIzaSyAXp1nL0FOnZLVsFANoZ09VT3Rn7WzbFLQ",
+    authDomain: "zaio-simualtion.firebaseapp.com",
+    projectId: "zaio-simualtion",
+    storageBucket: "zaio-simualtion.firebasestorage.app",
+    messagingSenderId: "550377364882",
+    appId: "1:550377364882:web:19accfae8b4c40eaacb54b"
       };
     
       
@@ -1151,6 +1151,10 @@
 
       // Initialize Firebase store and get a reference to the service
       const db = firebase.firestore();
+
+      // Initialize Cloud Storage and get a reference to the service
+      const storage = firebase.storage();
+      console.log(storage);
     </script>
 
     <script src="./index.js"></script>

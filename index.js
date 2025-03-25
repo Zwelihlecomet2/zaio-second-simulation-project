@@ -1,7 +1,7 @@
 class App {
     constructor(post){
         this.post  = [];
-        this.userId = "";
+        this.currentUser = null;
 
         this.$mainContainer = document.querySelector(".main-container");
         this.$firebaseuiAuthContainer = document.querySelector("#firebaseui-auth-container");
@@ -10,17 +10,13 @@ class App {
         this.$overlay = document.querySelector("#overlay");
         this.$uploadModal = document.querySelector("#uploadModal");
         this.$closeModal = document.querySelector("#closeModal");
-        this.$submit = document.querySelector("#submit");
+        this.$uploadForm = document.querySelector("#uploadForm");
 
         // Initialize the FirebaseUI Widget using Firebase.
         this.ui = new firebaseui.auth.AuthUI(auth);
 
         this.handleAuth();
         this.addEventListeners();
-    }
-
-    createPost(){
-
     }
 
     addEventListeners(){
@@ -41,9 +37,49 @@ class App {
                 this.closeModal(event);
             });
 
-            this.$submit.addEventListener("click", (event) =>{
-                event.preventDefault();
+            this.$uploadForm.addEventListener("submit", (event) =>{
+                this.handleSubmission(event);
             });
+    }
+
+    async handleSubmission(event){
+        event.preventDefault();
+
+        let caption = document.querySelector("#postCaption").value;
+        let postImage = document.querySelector("#postImage").files[0];
+        if(!caption || !postImage){
+            alert("Please provide both a caption and an image.");
+            return;
+        }
+        try{
+            // Show loading indicator or disable the button here if needed
+
+            // Upload the image to Firebase Storage
+            let storageRef = storage.ref(`posts/${this.currentUser.uid}/${postImage.name}`);
+            let uploadTask = storageRef.put(postImage);
+
+            await uploadTask;
+
+            // Get the download URL of the uploaded image
+            let downloadURL = await storageRef.getDownloadURL();
+
+            //Save the Post data to Firestore
+            await db.collection("posts").add({
+                userId: this.currentUser.uid,
+                caption: caption,
+                imageURL: downloadURL,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            alert("Post Uploaded Succesfully");
+            this.closeModal();
+            this.$uploadForm.reset();
+        }
+
+        catch(error){
+            console.log("Error Creating Post:", error);
+            alert("An error occurred while creating the post. Please try again.");
+        }
     }
 
     showUpModal(){
@@ -60,7 +96,7 @@ class App {
         auth.onAuthStateChanged((user) => {
             if (user) {
               // User is signed in
-              this.userId = user.uid;
+                this.currentUser = user;
               // ...
               this.redirectToApp();
             } else {
