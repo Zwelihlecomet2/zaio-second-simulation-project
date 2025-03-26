@@ -177,7 +177,6 @@ class App {
               // User is signed in
                 this.currentUser = user;
               // ...
-              console.log(this.currentUser.displayName);
               this.redirectToApp();
             } else {
               // User is signed out
