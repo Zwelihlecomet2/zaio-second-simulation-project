@@ -11,10 +11,12 @@ class App {
         this.$uploadModal = document.querySelector("#uploadModal");
         this.$closeModal = document.querySelector("#closeModal");
         this.$uploadForm = document.querySelector("#uploadForm");
+        this.$postsContainer = document.querySelector("#postsContainer");
 
         // Initialize the FirebaseUI Widget using Firebase.
         this.ui = new firebaseui.auth.AuthUI(auth);
 
+        this.fetchPosts();
         this.handleAuth();
         this.addEventListeners();
     }
@@ -42,15 +44,85 @@ class App {
             });
     }
 
+    async fetchPosts() {
+        let loadingIndicator = document.querySelector("#loadingIndicator");
+
+        // Show loading indicator
+        loadingIndicator.classList.remove("hidden");
+
+        try {
+            let postsSnapshot = await db.collection("posts").orderBy("timestamp", "desc").get(); // Sort posts by timestamp (newest first)
+
+            if (postsSnapshot.empty) {
+                // If no posts exist, show a message
+                this.$postsContainer.innerHTML = "<p>No posts available yet.</p>";
+            } else {
+                // Clear existing posts
+                this.$postsContainer.innerHTML = "";
+
+                // Loop through each post and create a post element
+                postsSnapshot.forEach((doc) => {
+                    let postData = doc.data();
+                    let postElement = this.createPostElement(postData); // Create a post element
+                    this.$postsContainer.appendChild(postElement); // Add it to the DOM
+                });
+            }
+        } 
+        
+        catch(error) {
+            console.error("Error fetching posts:", error);
+            alert("An error occurred while loading posts.");
+        } 
+        
+        finally {
+            // Hide loading indicator
+            loadingIndicator.classList.add("hidden");
+        }
+    }
+
+    createPostElement(postData) {
+        // Create the structure of a single post
+        let postDiv = document.createElement("div");
+        postDiv.classList.add("post");
+
+        postDiv.innerHTML = `
+            <div class="header">
+                <div class="profile-area">
+                    <div class="post-pic">
+                        <img alt="User's profile picture" src="${postData.profilePicture || 'assets/akhil.png'}" />
+                    </div>
+                    <span class="profile-name">${postData.userId}</span>
+                </div>
+            </div>
+            <div class="body">
+                <img alt="Post image" src="${postData.imageURL}" style="object-fit: cover;" />
+            </div>
+            <div class="footer">
+                <span class="caption">
+                    <span class="caption-text">${postData.caption}</span>
+                </span>
+            </div>
+        `;
+
+        return postDiv;
+    }
+
+
     async handleSubmission(event){
         event.preventDefault();
 
         let caption = document.querySelector("#postCaption").value;
         let postImage = document.querySelector("#postImage").files[0];
+
         if(!caption || !postImage){
             alert("Please provide both a caption and an image.");
             return;
         }
+
+        // Show the loading indicator
+        let loadingIndicator = document.querySelector("#loadingIndicator");
+        loadingIndicator.classList.remove("hidden");
+
         try{
             // Show loading indicator or disable the button here if needed
 
@@ -80,6 +152,13 @@ class App {
             console.log("Error Creating Post:", error);
             alert("An error occurred while creating the post. Please try again.");
         }
+
+        finally{
+            // Hide the loading indicator (whether success or failure)
+            loadingIndicator.classList.add("hidden");
+        }
+
+        this.fetchPosts();
     }
 
     showUpModal(){
@@ -98,6 +177,7 @@ class App {
               // User is signed in
                 this.currentUser = user;
               // ...
+              console.log(this.currentUser.displayName);
               this.redirectToApp();
             } else {
               // User is signed out
