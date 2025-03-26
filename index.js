@@ -16,7 +16,6 @@ class App {
         // Initialize the FirebaseUI Widget using Firebase.
         this.ui = new firebaseui.auth.AuthUI(auth);
 
-        this.fetchPosts();
         this.handleAuth();
         this.addEventListeners();
     }
@@ -51,8 +50,13 @@ class App {
         loadingIndicator.classList.remove("hidden");
 
         try {
-            let postsSnapshot = await db.collection("posts").orderBy("timestamp", "desc").get(); // Sort posts by timestamp (newest first)
-
+            let postsSnapshot = await db
+            .collection("posts")
+            .where("userId", "==", this.currentUser.uid)
+            .orderBy("timestamp", "desc")
+            .get();
+            
+            
             if (postsSnapshot.empty) {
                 // If no posts exist, show a message
                 this.$postsContainer.innerHTML = "<p>No posts available yet.</p>";
@@ -145,6 +149,7 @@ class App {
             alert("Post Uploaded Succesfully");
             this.closeModal();
             this.$uploadForm.reset();
+            location.reload();
         }
 
         catch(error){
@@ -155,9 +160,8 @@ class App {
         finally{
             // Hide the loading indicator (whether success or failure)
             loadingIndicator.classList.add("hidden");
-        }
 
-        this.fetchPosts();
+        }
     }
 
     showUpModal(){
@@ -171,12 +175,15 @@ class App {
     }
 
     handleAuth(){
-        auth.onAuthStateChanged((user) => {
-            if (user) {
+        auth.onAuthStateChanged( async (user) => {
+            if(user) {
               // User is signed in
                 this.currentUser = user;
               // ...
               this.redirectToApp();
+
+            await this.fetchPosts();
+
             } else {
               // User is signed out
               // ...
