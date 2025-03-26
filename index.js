@@ -91,7 +91,6 @@ class App {
                     <div class="post-pic">
                         <img alt="User's profile picture" src="${postData.profilePicture || 'assets/akhil.png'}" />
                     </div>
-                    <span class="profile-name">${postData.userId}</span>
                 </div>
             </div>
             <div class="body">
