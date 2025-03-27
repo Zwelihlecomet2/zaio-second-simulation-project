@@ -52,7 +52,7 @@ class App {
         optionsList.innerHTML = "";
     
         // Check if the user is authenticated
-        if (!auth.currentUser) {
+        if(!auth.currentUser){
             alert("You must be logged in to view options.");
             return;
         }
