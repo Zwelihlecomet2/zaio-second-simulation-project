@@ -491,3 +491,51 @@ main {
 .hidden {
     display: none;
 }
+
+.more-button button{
+    padding: 1px;
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Options Modal */
+#optionsModal {
+    position: absolute;
+    top: 50px; /* Adjust based on the "more" icon position */
+    right: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    z-index: 1000;
+    max-width: 300px;
+  }
+  
+  #optionsModal.hidden {
+    display: none;
+  }
+  
+  #optionsList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  #optionsList li {
+    padding: 8px 16px;
+    cursor: pointer;
+    color: black;
+  }
+  
+  #optionsList li.red {
+    color: red;
+    font-weight: bold;
+  }
+  
+  #optionsList li:hover {
+    background-color: #f0f0f0;
+  }

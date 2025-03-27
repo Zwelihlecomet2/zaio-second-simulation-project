@@ -36,11 +36,58 @@ class App {
 
             this.$overlay.addEventListener("click", (event) =>{
                 this.closeModal(event);
+                optionsModal.classList.add("hidden");
             });
 
             this.$uploadForm.addEventListener("submit", (event) =>{
                 this.handleSubmission(event);
             });
+    }
+
+    showOptionsModal(postId, postUserId) {
+        let optionsModal = document.querySelector("#optionsModal");
+        let optionsList = document.querySelector("#optionsList");
+    
+        // Clear existing options
+        optionsList.innerHTML = "";
+    
+        // Check if the user is authenticated
+        if (!auth.currentUser) {
+            alert("You must be logged in to view options.");
+            return;
+        }
+    
+        // Check if the post belongs to the current user
+        if (auth.currentUser.uid === postUserId) {
+            // Add "Edit" and "Delete" options in red
+            let editOption = document.createElement("li");
+            editOption.textContent = "Edit";
+            editOption.classList.add("red");
+            editOption.addEventListener("click", () => this.editPost(postId));
+            optionsList.appendChild(editOption);
+    
+            let deleteOption = document.createElement("li");
+            deleteOption.textContent = "Delete";
+            deleteOption.classList.add("red");
+            deleteOption.addEventListener("click", () => this.deletePost(postId));
+            optionsList.appendChild(deleteOption);
+        }
+    
+        // Add default Instagram-like options in black
+        let defaultOptions = ["Report", "Unfollow", "Go to post", "Share to...", "Copy link"];
+        defaultOptions.forEach((optionText) => {
+            let option = document.createElement("li");
+            option.textContent = optionText;
+            optionsList.appendChild(option);
+        });
+    
+        // Position the modal near the clicked button
+        let moreButtonRect = event.target.getBoundingClientRect();
+        optionsModal.style.top = `${moreButtonRect.bottom + window.scrollY}px`;
+        optionsModal.style.left = `${moreButtonRect.right + window.scrollX - 200}px`;
+    
+        // Show the modal
+        optionsModal.classList.remove("hidden");
     }
 
     async fetchPosts() {
@@ -52,7 +99,6 @@ class App {
         try {
             let postsSnapshot = await db
             .collection("posts")
-            .where("userId", "==", this.currentUser.uid)
             .orderBy("timestamp", "desc")
             .get();
             
@@ -88,12 +134,17 @@ class App {
         // Create the structure of a single post
         let postDiv = document.createElement("div");
         postDiv.classList.add("post");
+        postDiv.id = postData.id; // Assign Firestore document ID to the post
 
         postDiv.innerHTML = `
             <div class="header">
                 <div class="profile-area">
                     <div class="post-pic">
                         <img alt="User's profile picture" src="${postData.profilePicture || 'assets/akhil.png'}" />
+                    </div>
+                    <div class="post-info">
+                        <span class="profile-name">${postData.userId}</span>
+                        <span class="more-button"><button>More</button></span>
                     </div>
                 </div>
             </div>
@@ -106,6 +157,13 @@ class App {
                 </span>
             </div>
         `;
+
+            // Attach an event listener to the "More" button
+            let moreButton = postDiv.querySelector(".more-button button");
+            moreButton.addEventListener("click", () => {
+            this.showOptionsModal(postData.id, postData.userId); // Pass post ID and user ID
+            this.$overlay.classList.remove("hidden");
+    });
 
         return postDiv;
     }
