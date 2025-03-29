@@ -43,8 +43,101 @@ class App {
                 this.handleSubmission(event);
             });
     }
+    
+    updatePostInDOM(postId, updatedData) {
+        // Find the post element by its ID
+        const postElement = document.getElementById(postId);
+        if (!postElement) {
+            console.error("Post element not found in DOM for ID:", postId);
+            return;
+        }
+    
+        // Update the caption
+        const captionElement = postElement.querySelector(".caption-text");
+        if (captionElement) {
+            captionElement.textContent = updatedData.caption;
+        }
+    
+        // Update the image if a new image URL is provided
+        if (updatedData.imageURL) {
+            const imageElement = postElement.querySelector(".body img");
+            if (imageElement) {
+                imageElement.src = updatedData.imageURL;
+            }
+        }
+    }
 
-    showOptionsModal(postId, postUserId) {
+    async editPost(postId) {
+        try {
+            // Check if the user is authenticated
+            if (!auth.currentUser) {
+                alert("You must be logged in to edit a post.");
+                return;
+            }
+    
+            // Fetch the post data from Firestore
+            const postDoc = await db.collection("posts").doc(postId).get();
+    
+            // Check if the post exists
+            if (!postDoc.exists) {
+                console.error("Post not found for ID:", postId);
+                alert("The post you are trying to edit does not exist.");
+                return;
+            }
+    
+            // Get the post data
+            const postData = postDoc.data();
+    
+            // Check if the post data is valid
+            if (!postData || !postData.caption || !postData.imageURL) {
+                console.error("Post data is missing or invalid:", postData);
+                alert("The post data is missing or invalid.");
+                return;
+            }
+    
+            // Open the upload modal with pre-filled data
+            document.getElementById("postCaption").value = postData.caption;
+            document.getElementById("existingImage").src = postData.imageURL; // Display the existing image
+            this.showUpModal();
+    
+            // Temporarily store the Firestore document ID
+            let currentPostId = postId;
+    
+            // Override the form submission to update the post instead of creating a new one
+            this.$uploadForm.onsubmit = async (event) => {
+                event.preventDefault();
+                const newCaption = document.getElementById("postCaption").value;
+                const newImageFile = document.getElementById("postImage").files[0];
+    
+                // Prepare the updated data
+                let updatedData = { caption: newCaption };
+    
+                // If a new image is uploaded, update it in Firebase Storage
+                if (newImageFile) {
+                    let storageRef = storage.ref(`posts/${this.currentUser.uid}/${newImageFile.name}`);
+                    let uploadTask = storageRef.put(newImageFile);
+                    await uploadTask;
+                    let newImageURL = await storageRef.getDownloadURL();
+                    updatedData.imageURL = newImageURL; // Add the new image URL to the update
+                }
+    
+                // Update the post in Firestore
+                await db.collection("posts").doc(currentPostId).update(updatedData);
+    
+                // Dynamically update the post in the DOM
+                this.updatePostInDOM(currentPostId, updatedData);
+    
+                alert("Post updated successfully!");
+                this.closeModal();
+            };
+        } catch (error) {
+            console.error("Error editing post:", error);
+            alert("An error occurred while editing the post. Please try again.");
+        }
+    }
+
+
+    showOptionsModal(postId, postUserId){
         let optionsModal = document.querySelector("#optionsModal");
         let optionsList = document.querySelector("#optionsList");
     
@@ -58,12 +151,16 @@ class App {
         }
     
         // Check if the post belongs to the current user
-        if (auth.currentUser.uid === postUserId) {
+        if(auth.currentUser.uid === postUserId) {
             // Add "Edit" and "Delete" options in red
             let editOption = document.createElement("li");
             editOption.textContent = "Edit";
             editOption.classList.add("red");
-            editOption.addEventListener("click", () => this.editPost(postId));
+
+            editOption.addEventListener("click", () =>{
+                this.editPost(postId);
+                this.closeOptionsModal();
+            });
             optionsList.appendChild(editOption);
     
             let deleteOption = document.createElement("li");
@@ -90,6 +187,10 @@ class App {
         optionsModal.classList.remove("hidden");
     }
 
+    closeOptionsModal(){
+        optionsModal.classList.add("hidden");
+    }
+
     async fetchPosts() {
         let loadingIndicator = document.querySelector("#loadingIndicator");
 
@@ -113,6 +214,8 @@ class App {
                 // Loop through each post and create a post element
                 postsSnapshot.forEach((doc) => {
                     let postData = doc.data();
+                    postData.id = doc.id; // Assign the Firestore document ID
+                    console.log("Fetched Post Data:", postData); // Log the fetched data
                     let postElement = this.createPostElement(postData); // Create a post element
                     this.$postsContainer.appendChild(postElement); // Add it to the DOM
                 });
@@ -203,7 +306,6 @@ class App {
                 imageURL: downloadURL,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-
             alert("Post Uploaded Succesfully");
             this.closeModal();
             this.$uploadForm.reset();
@@ -218,7 +320,6 @@ class App {
         finally{
             // Hide the loading indicator (whether success or failure)
             loadingIndicator.classList.add("hidden");
-
         }
     }
 

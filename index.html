@@ -349,15 +349,20 @@
 
         <!-- Upload Modal -->
         <div id="uploadModal" class="hidden">
-          <h2>Create a Post</h2>
+          <h2>Create/Edit a Post</h2>
           <form id="uploadForm">
               <label for="postCaption">Caption:</label>
               <input type="text" id="postCaption" placeholder="Add a caption..." required>
-              
-              <label for="postImage">Image File:</label>
-              <input type="file" id="postImage" placeholder="Enter image URL..." accept="image/*" required>
-              
-              <button type="submit">Post</button>
+      
+              <!-- Existing Image -->
+              <label for="existingImage">Existing Image:</label>
+              <img id="existingImage" src="" alt="Existing Post Image" style="max-width: 100%; height: auto;" />
+      
+              <!-- New Image Upload -->
+              <label for="postImage">Change Image:</label>
+              <input type="file" id="postImage" accept="image/*">
+      
+              <button type="submit">Save Changes</button>
           </form>
           <button id="closeModal">Close</button>
       </div>
