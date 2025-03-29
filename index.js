@@ -43,27 +43,61 @@ class App {
                 this.handleSubmission(event);
             });
     }
+
+    async deletePost(postId) {
+        try {
+            // Confirm with the user before deleting the post
+            const confirmDelete = confirm("Are you sure you want to delete this post?");
+            if (!confirmDelete) return;
     
-    updatePostInDOM(postId, updatedData) {
-        // Find the post element by its ID
-        const postElement = document.getElementById(postId);
-        if (!postElement) {
-            console.error("Post element not found in DOM for ID:", postId);
-            return;
-        }
+            // Fetch the post data from Firestore
+            const postDoc = await db.collection("posts").doc(postId).get();
     
-        // Update the caption
-        const captionElement = postElement.querySelector(".caption-text");
-        if (captionElement) {
-            captionElement.textContent = updatedData.caption;
-        }
-    
-        // Update the image if a new image URL is provided
-        if (updatedData.imageURL) {
-            const imageElement = postElement.querySelector(".body img");
-            if (imageElement) {
-                imageElement.src = updatedData.imageURL;
+            // Check if the post exists
+            if (!postDoc.exists) {
+                console.error("Post not found for ID:", postId);
+                alert("The post you are trying to delete does not exist.");
+                return;
             }
+    
+            // Get the post data
+            const postData = postDoc.data();
+    
+            // Check if the post data is valid
+            if (!postData || !postData.imageURL) {
+                console.error("Post data is missing or invalid:", postData);
+                alert("The post data is missing or invalid.");
+                return;
+            }
+    
+            // Attempt to delete the image from Firebase Storage
+            try {
+                const imageRef = storage.refFromURL(postData.imageURL);
+    
+                // Check if the file exists before deleting
+                await imageRef.getMetadata(); // Throws an error if the file doesn't exist
+                await imageRef.delete();
+            } catch (storageError) {
+                console.warn("Image not found in storage or already deleted:", storageError);
+                // If the image doesn't exist, continue with the deletion process
+            }
+    
+            // Delete the post document from Firestore
+            await db.collection("posts").doc(postId).delete();
+    
+            // Remove the post element from the DOM
+            const postElement = document.getElementById(postId);
+            if (postElement) {
+                postElement.remove();
+            }
+                        
+            alert("Post deleted successfully!");
+            this.closeOptionsModal();
+            location.reload();
+
+        } catch (error) {
+            console.error("Error deleting post:", error);
+            alert("An error occurred while deleting the post. Please try again.");
         }
     }
 
@@ -110,7 +144,7 @@ class App {
                 const newImageFile = document.getElementById("postImage").files[0];
     
                 // Prepare the updated data
-                let updatedData = { caption: newCaption };
+                let updatedData = { caption: newCaption};
     
                 // If a new image is uploaded, update it in Firebase Storage
                 if (newImageFile) {
@@ -123,10 +157,7 @@ class App {
     
                 // Update the post in Firestore
                 await db.collection("posts").doc(currentPostId).update(updatedData);
-    
-                // Dynamically update the post in the DOM
-                this.updatePostInDOM(currentPostId, updatedData);
-    
+        
                 alert("Post updated successfully!");
                 this.closeModal();
             };
@@ -166,7 +197,10 @@ class App {
             let deleteOption = document.createElement("li");
             deleteOption.textContent = "Delete";
             deleteOption.classList.add("red");
-            deleteOption.addEventListener("click", () => this.deletePost(postId));
+
+            deleteOption.addEventListener("click", () =>{
+                this.deletePost(postId);
+            });
             optionsList.appendChild(deleteOption);
         }
     
